@@ -48,9 +48,9 @@ def admin (request):
 
 @login_required
 def tasks_completed (request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
+    task = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
     ('-datecompleted')
-    return render(request, 'signup2.html', {'task': tasks})
+    return render(request, 'signup2.html', {'task': task})
 
 @login_required
 def create_task(request):
@@ -74,8 +74,8 @@ def create_task(request):
 
 @login_required
 def task_detail(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
-    return render(request, 'task_detail.html', {'task': task }) 
+    tasks = get_object_or_404(Task, pk=task_id, user=request.user)
+    return render(request, 'task_detail.html', {'tasks': tasks}) 
 
 @login_required
 def task_edit(request, task_id):

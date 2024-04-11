@@ -48,9 +48,9 @@ def admin (request):
 
 @login_required
 def tasks_completed (request):
-    task = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
+    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
     ('-datecompleted')
-    return render(request, 'signup2.html', {'task': task})
+    return render(request, 'signup2.html', {'tasks': tasks})
 
 @login_required
 def create_task(request):
@@ -81,16 +81,16 @@ def task_detail(request, task_id):
 def task_edit(request, task_id):
     if request.method == 'GET':
         tasks = get_object_or_404(Task, pk=task_id, user=request.user)
-        form = TaskForm(instance=task)
+        form = TaskForm(instance=tasks)
         return render(request, 'task_edit.html', {'tasks': tasks, 'form': form})
     else:
         try:
             task = get_object_or_404(Task, pk=task_id, user=request.user )
-            form = TaskForm(request.POST, instance=task)
+            form = TaskForm(request.POST, instance=tasks)
             form.save()
             return redirect('tasks')
         except ValueError:
-            return render(request,'task_edit.html', {'task': task, 'form': form,
+            return render(request,'task_edit.html', {'tasks': tasks, 'form': form,
             'error': "Error updating Task"})
 
 @login_required

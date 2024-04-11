@@ -40,17 +40,17 @@ def signup(request):
 
 @login_required
 def tasks (request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False)
-    return render(request, 'tasks.html', {'tasks': tasks})
+    task = Task.objects.filter(user=request.user, datecompleted__isnull=False)
+    return render(request, 'tasks.html', {'task': task})
 
 def admin (request):
     return render (request, 'admin/') 
 
 @login_required
 def tasks_completed (request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
+    task = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
     ('-datecompleted')
-    return render(request, 'signup2.html', {'tasks': tasks})
+    return render(request, 'signup2.html', {'task': task})
 
 @login_required
 def create_task(request):
@@ -65,7 +65,7 @@ def create_task(request):
             print(form)
             new_task.user = request.user
             new_task.save()
-            return redirect('tasks')
+            return redirect('task')
         except ValueError:
             return render(request, 'create_task.html', {
                 'form': TaskForm,
@@ -74,28 +74,28 @@ def create_task(request):
 
 @login_required
 def task_detail(request, task_id):
-    tasks = get_object_or_404(Task, pk=task_id, user=request.user)
-    return render(request, 'task_detail.html', {'tasks': tasks}) 
+    task = get_object_or_404(Task, pk=task_id, user=request.user)
+    return render(request, 'task_detail.html', {'task': task}) 
 
 @login_required
 def task_edit(request, task_id):
     if request.method == 'GET':
-        tasks = get_object_or_404(Task, pk=task_id, user=request.user)
-        form = TaskForm(instance=tasks)
-        return render(request, 'task_edit.html', {'tasks': tasks, 'form': form})
+        task = get_object_or_404(Task, pk=task_id, user=request.user)
+        form = TaskForm(instance=task)
+        return render(request, 'task_edit.html', {'task': task, 'form': form})
     else:
         try:
             task = get_object_or_404(Task, pk=task_id, user=request.user )
             form = TaskForm(request.POST, instance=tasks)
             form.save()
-            return redirect('tasks')
+            return redirect('task')
         except ValueError:
-            return render(request,'task_edit.html', {'tasks': tasks, 'form': form,
+            return render(request,'task_edit.html', {'task': task, 'form': form,
             'error': "Error updating Task"})
 
 @login_required
 def complete_task(request, task_id):
-    tasks = get_object_or_404(Task, pk=task_id, user=request.user)
+    task = get_object_or_404(Task, pk=task_id, user=request.user)
     if request.method == 'POST':
         tasks.datecompleted = timezone.now()
         tasks.save()
